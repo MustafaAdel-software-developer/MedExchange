@@ -9,6 +9,9 @@ import { IdentificationsModule } from './identifications/identifications.module'
 import { PaymentsModule } from './payments/payments.module';
 import { OrdersModule } from './orders/orders.module';
 import { ServicesModule } from './services/services.module';
+import { BillableItemsModule } from './billable-items/billable-items.module';
+import { LocationsModule } from './locations/locations.module';
+import { EntityDocumentsModule } from './entity-documents/entity-documents.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { ServicesModule } from './services/services.module';
     PaymentsModule,
     OrdersModule,
     ServicesModule,
+    BillableItemsModule,
+    LocationsModule,
+    EntityDocumentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
