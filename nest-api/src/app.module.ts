@@ -12,6 +12,8 @@ import { ServicesModule } from './services/services.module';
 import { BillableItemsModule } from './billable-items/billable-items.module';
 import { LocationsModule } from './locations/locations.module';
 import { EntityDocumentsModule } from './entity-documents/entity-documents.module';
+import { DiagnosisModule } from './diagnosis/diagnosis.module';
+import { CatalogModule } from './catalog/catalog.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { EntityDocumentsModule } from './entity-documents/entity-documents.modul
     BillableItemsModule,
     LocationsModule,
     EntityDocumentsModule,
+    DiagnosisModule,
+    CatalogModule,
   ],
   controllers: [AppController],
   providers: [AppService],
