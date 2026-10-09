@@ -1,45 +1,19 @@
-# MedExchange
+# MedExchange (Node)
 
-Healthcare ordering platform API — NestJS, Prisma, PostgreSQL.
+Node and TypeScript API for the MedExchange learning rebuild. `main` still holds the NestJS snapshot.
 
 ## Stack
 
-- **API:** NestJS (TypeScript)
-- **ORM:** Prisma
-- **DB:** PostgreSQL
-- **Auth:** JWT + refresh tokens
-- **Payments:** Stripe Checkout (embedded)
+- Node.js `http`
+- TypeScript
+- `tsx` for local runs
 
 ## Quick start
 
 ```bash
-cd nest-api
 cp .env.example .env
-# edit DATABASE_URL, JWT_*, etc.
-
 npm install
-npx prisma generate
-npm run start:dev
+npm run dev
 ```
 
-Health check: `GET http://localhost:3000/health/db`
-
-## Project layout
-
-```
-nest-api/
-  prisma/          # schema
-  src/
-    auth/          # login, register, tokens, email confirm/reset
-    entities/      # practices / entity context
-    identifications/
-    orders/
-    payments/      # payment links + Stripe webhook
-    services/      # service catalog / wizard reads
-    catalog/       # states, categories, taxonomies
-    ...
-```
-
-## Notes
-
-Frontend (Vite + React + TypeScript) lands in a top-level `frontend/` folder in a later wave. This repository currently publishes the Nest API.
+Health check: `GET http://127.0.0.1:25121/health`
