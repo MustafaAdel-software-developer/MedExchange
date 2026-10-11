@@ -1,4 +1,12 @@
+import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
+import { logger } from "./log.js";
+
+// Rule: an incoming x-request-id is kept only if it is exactly one UUID.
+// Anything else (empty, wrong shape, repeated header) gets a fresh UUID.
+// Deliberate cost: ids from other systems in another format are replaced.
+const uuidRegex =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const port = Number(process.env.PORT);
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -6,6 +14,25 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 
 const server = createServer((req, res) => {
+  const incoming = req.headers["x-request-id"];
+  const requestId =
+    typeof incoming === "string" && uuidRegex.test(incoming)
+      ? incoming
+      : randomUUID();
+  const start = performance.now();
+
+  // Shared by every route: the header, and one log line when the response is done.
+  res.setHeader("x-request-id", requestId);
+  res.on("finish", () => {
+    logger.info({
+      requestId,
+      method: req.method,
+      url: req.url,
+      status: res.statusCode,
+      ms: performance.now() - start,
+    });
+  });
+
   if (req.method === "GET" && req.url === "/health") {
     res.writeHead(200, { "content-type": "text/plain" });
     res.end("ok\n");
@@ -13,7 +40,7 @@ const server = createServer((req, res) => {
   }
 
   res.writeHead(404, { "content-type": "text/plain" });
-  res.end("not found\n");
+  res.end("Not Found\n");
 });
 
 server.listen(port, () => {
