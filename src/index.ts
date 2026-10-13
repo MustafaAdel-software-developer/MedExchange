@@ -1,7 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 import { logger } from "./log.js";
+import {  HttpError, sendError } from "./http/error.js";
+import { ErrorMessages, StatusCodes } from "./http/contstans.js";
 
+const status_codes = new StatusCodes;
+const error_messages = new ErrorMessages;
 // Rule: an incoming x-request-id is kept only if it is exactly one UUID.
 // Anything else (empty, wrong shape, repeated header) gets a fresh UUID.
 // Deliberate cost: ids from other systems in another format are replaced.
@@ -14,33 +18,43 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 
 const server = createServer((req, res) => {
-  const incoming = req.headers["x-request-id"];
-  const requestId =
-    typeof incoming === "string" && uuidRegex.test(incoming)
-      ? incoming
-      : randomUUID();
-  const start = performance.now();
+  try {
+    const incoming = req.headers["x-request-id"];
+    const requestId =
+      typeof incoming === "string" && uuidRegex.test(incoming)
+        ? incoming
+        : randomUUID();
+    const start = performance.now();
 
-  // Shared by every route: the header, and one log line when the response is done.
-  res.setHeader("x-request-id", requestId);
-  res.on("finish", () => {
-    logger.info({
-      requestId,
-      method: req.method,
-      url: req.url,
-      status: res.statusCode,
-      ms: performance.now() - start,
+    // Shared by every route: the header, and one log line when the response is done.
+    res.setHeader("x-request-id", requestId);
+    res.on("finish", () => {
+      logger.info({
+        requestId,
+        method: req.method,
+        url: req.url,
+        status: res.statusCode,
+        ms: performance.now() - start,
+      });
     });
-  });
 
-  if (req.method === "GET" && req.url === "/health") {
-    res.writeHead(200, { "content-type": "text/plain" });
-    res.end("ok\n");
-    return;
+    if (req.method === "GET" && req.url === "/health") {
+      res.writeHead(200, { "content-type": "text/plain" });
+      res.end("ok\n");
+      return;
+    }
+    else{
+      const os = {
+        code: status_codes.not_here,
+        message: error_messages.not_here,
+      }
+      throw new HttpError(os);
+    }
+
+  } catch (err: HttpError | unknown) {
+      sendError(res, res.getHeader("x-request-id") as string, err);
+      return;
   }
-
-  res.writeHead(404, { "content-type": "text/plain" });
-  res.end("Not Found\n");
 });
 
 server.listen(port, () => {
