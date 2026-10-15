@@ -6,6 +6,7 @@ import { ErrorMessages, StatusCodes } from "./http/contstans.js";
 
 const status_codes = new StatusCodes;
 const error_messages = new ErrorMessages;
+
 // Rule: an incoming x-request-id is kept only if it is exactly one UUID.
 // Anything else (empty, wrong shape, repeated header) gets a fresh UUID.
 // Deliberate cost: ids from other systems in another format are replaced.
@@ -43,6 +44,13 @@ const server = createServer((req, res) => {
       res.end("ok\n");
       return;
     }
+    if(req.method === "GET" && req.url === "/slow"){
+      setTimeout(() => {
+        res.writeHead(200, { "content-type": "text/plain" });
+        res.end("ok\n");
+      }, 3000);
+      
+    }
     else{
       const os = {
         code: status_codes.not_here,
@@ -56,6 +64,22 @@ const server = createServer((req, res) => {
       return;
   }
 });
+
+process.on('SIGINT', handle);
+process.on('SIGTERM', handle);
+
+function handle() {
+  console.log("shutting down");
+    server.close(() => {
+    console.log("all connections are closed");
+    process.exit(0);
+    });
+  server.closeIdleConnections();
+  setTimeout(() => {
+    console.error("Forcing shutdown after timeout.");
+    process.exit(1);
+  }, 10000).unref();
+}
 
 server.listen(port, () => {
   console.log(`listening on ${port}`);
