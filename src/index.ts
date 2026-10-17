@@ -48,7 +48,7 @@ const server = createServer((req, res) => {
       setTimeout(() => {
         res.writeHead(200, { "content-type": "text/plain" });
         res.end("ok\n");
-      }, "3000");
+      }, 3000);
       
     }
     else{
