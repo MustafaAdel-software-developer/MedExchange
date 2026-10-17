@@ -36,7 +36,7 @@ export function createApp(){
     });
 
     if (req.method === "GET" && req.url === "/health") {
-      res.writeHead('200', { "content-type": "text/plain" });
+      res.writeHead(200, { "content-type": "text/plain" });
       res.end("ok\n");
       return;
     }

@@ -16,7 +16,7 @@ test("health endpoint pass", async () => {
     const health = await fetch(
       `http://localhost:${(server.address() as AddressInfo).port}/health`,
     );
-    assert.strictEqual(health.status,200);
+    assert.strictEqual(health.status,'200');
   } finally {
     server.close();
   }
