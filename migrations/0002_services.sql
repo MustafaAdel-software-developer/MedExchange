@@ -1,0 +1,1 @@
+CREATE TABLE services(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), practice_id uuid null, title text not null, price_cents BIGINT not null CHECK (price_cents >= 0), version int not null DEFAULT 1, create_at timestamptz default now(), updated_at timestamptz default now())
