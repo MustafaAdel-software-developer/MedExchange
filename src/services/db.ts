@@ -63,7 +63,7 @@ async function listServices() {
 async function updateService(id: UUID, service: serviceDto) {
   try {
     const sql =
-      "UPDATE services SET practice_id = $2, title = $3, price_cents = $4, version = $5 WHERE id = $1";
+      "UPDATE services SET practice_id = $2, title = $3, price_cents = $4, version = $5, updated_at = now() WHERE id = $1";
     const old_service_data = await pool.query(
       "SELECT * FROM services WHERE id = $1",
       [id],
