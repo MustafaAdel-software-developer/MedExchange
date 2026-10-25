@@ -1,6 +1,6 @@
 import { IncomingMessage } from "node:http";
 import { HttpError } from "./error.js";
-import { ErrorMessages } from "./contstans.js";
+import { ErrorMessages, StatusCodes } from "./contstans.js";
 
 const MAX_BODY_SIZE = 64 * 1024;
 const payload_error = new ErrorMessages().payload_too_long;
@@ -17,8 +17,8 @@ export function readBody(req: IncomingMessage): Promise<string> {
         req.destroy();
         reject(
           new HttpError({
-            status: "payload_too_long",
-            code: "413",
+            status: new StatusCodes().payload_too_long,
+            code: "payload_too_long",
             message: payload_error,
           }),
         );
@@ -36,9 +36,9 @@ export async function readJson(req: IncomingMessage): Promise<unknown> {
     return JSON.parse(body) as unknown;
   } catch (err) {
     throw new HttpError({
-      status: "invalid_json",
-      code: "400",
-      message: "Bad JSON.",
+      status: 400,
+      code: "invalid_json",
+      message: new ErrorMessages().invalid_json,
     });
   }
 }
