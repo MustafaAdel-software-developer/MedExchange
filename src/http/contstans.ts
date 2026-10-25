@@ -18,4 +18,5 @@ export class ErrorMessages {
   semantically_error = "There is a semantical error here.";
   slow_down = "Too many requests there.";
   internal = "Server error";
+  payload_too_long = "Payload too large. Limit is 64KB."
 }
