@@ -1,13 +1,13 @@
 //inserts one service and reads it back.
 
 import { pool } from "../src/db/pool.js";
-import { findService, insertService, serviceDto } from "../src/services/db.js";
+import { findService, insertService } from "../src/services/db.js";
+import { CreateService } from "../src/services/schema.js";
 
 try{
-    const mockService: serviceDto = {
-  practice_id: "7d2e4f6a-8b0c-4d2e-9f1a-3b5c7d9e1f0a",
+    const mockService: CreateService = {
     title: "Standard Diagnostic Assessment",
-    price_cents: 9500,
+    priceCents: 9500,
 };
 
 const service_id = await insertService(mockService);

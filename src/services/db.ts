@@ -1,5 +1,6 @@
 import { UUID } from "node:crypto";
 import { pool } from "../db/pool.js";
+import { CreateService } from "./schema.js";
 
 
 export type serviceDto = {
@@ -18,11 +19,11 @@ export type Service = {
   updated_at: Date;
 };
 
-export async function insertService(service: serviceDto) {
+export async function insertService(service: CreateService) {
   try {
     const service_id = await pool.query(
-      "INSERT INTO services (practice_id,title,price_cents) VALUES ($1, $2, $3) RETURNING id;",
-      [service.practice_id, service.title, service.price_cents],
+      "INSERT INTO services (title,price_cents) VALUES ($1, $2) RETURNING id;",
+      [service.title, service.priceCents],
     );
     console.log("service inserted");
     return service_id.rows[0].id;
