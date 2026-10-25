@@ -16,6 +16,24 @@
   },
   "dependencies": {
     "pg": "^8.23.1",
-    "pino": "^10.4.0"
-  }
+    "pino": "^10.4.0",
+    "zod": "^4.6.7"
+  },
+  "version": "1.0.0",
+  "description": "Node and TypeScript API for the MedExchange learning rebuild. `main` still holds the NestJS snapshot.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MustafaAdel-software-developer/MedExchange.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MustafaAdel-software-developer/MedExchange/issues"
+  },
+  "homepage": "https://github.com/MustafaAdel-software-developer/MedExchange#readme"
 }
