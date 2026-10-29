@@ -1,5 +1,5 @@
 import { IncomingMessage } from "node:http";
-import { HttpError } from "./error.js";
+import { HttpError, sendError } from "./error.js";
 import { ErrorMessages, StatusCodes } from "./contstans.js";
 
 const MAX_BODY_SIZE = 64 * 1024;
@@ -14,14 +14,14 @@ export function readBody(req: IncomingMessage): Promise<string> {
       chunksSizeCheck += chunk.length;
 
       if (chunksSizeCheck > MAX_BODY_SIZE) {
-        req.destroy();
         reject(
           new HttpError({
             status: new StatusCodes().payload_too_long,
             code: "payload_too_long",
             message: payload_error,
-          }),
+          })
         );
+      return;
       }
       chunks.push(chunk);
     });

@@ -32,13 +32,16 @@ export function sendError(
   if (err instanceof HttpError) {
     const options = {
       error: {
-        status:err.status,
+        status: err.status,
         code: err.code,
         message: err.message,
         details: err.details,
       },
-      requestId
+      requestId,
     };
+    if (options.error.status === 413) {
+      res.setHeader("connection", "close");
+    }
     res.writeHead(err.status, { "content-type": "application/json" });
     res.end(`${JSON.stringify(options)}`);
   } else {

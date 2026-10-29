@@ -2,50 +2,43 @@ import { UUID } from "node:crypto";
 import { pool } from "../db/pool.js";
 import { CreateService } from "./schema.js";
 
-
 export type serviceDto = {
   practice_id?: UUID;
   title: string;
-  price_cents: number;
+  priceCents: number;
 };
 
 export type Service = {
   id: UUID;
-  practice_id?: UUID;
+  practiceId?: UUID;
   title: string;
-  price_cents: number;
+  priceCents: number;
   version: number;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export async function insertService(service: CreateService) {
   try {
     const service_id = await pool.query(
-      "INSERT INTO services (title,price_cents) VALUES ($1, $2) RETURNING id;",
+      "INSERT INTO services (title,price_cents) VALUES ($1, $2) RETURNING *;",
       [service.title, service.priceCents],
     );
-    console.log("service inserted");
-    return service_id.rows[0].id;
+    return toService(service_id.rows[0]);
   } catch (err) {
     throw err;
   }
 }
 
-export async function findService(id: UUID) : Promise<Service | null >{
+export async function findService(id: UUID): Promise<Service | null> {
   try {
     const res = await pool.query("SELECT * FROM services WHERE id = $1", [id]);
-    if(res.rows[0] === undefined){
-        return null;
+    if (res.rows[0] === undefined) {
+      return null;
     }
-    const service = {
-      ...res.rows[0],
-      price_cents: Number(res.rows[0].price_cents),
-    };
-
+    const service = toService(res.rows[0])
     return service;
   } catch (err) {
-    
     throw err;
   }
 }
@@ -73,11 +66,24 @@ async function updateService(id: UUID, service: serviceDto) {
       id,
       service.practice_id ?? old_service_data.rows[0].practice_id,
       service.title ?? old_service_data.rows[0].title,
-      service.price_cents ?? old_service_data.rows[0].price_cents,
+      service.priceCents ?? old_service_data.rows[0].price_cents,
       old_service_data.rows[0].version + 1,
     ]);
     console.log("service updated");
   } catch (err) {
     throw err;
   }
+}
+
+function toService(row: any): Service {
+  const service: Service = {
+    id: row.id,
+    priceCents: Number(row.price_cents),
+    title: row.title,
+    version: row.version,
+    practiceId: row.practice_id,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+  return service;
 }

@@ -53,32 +53,28 @@ export function createApp() {
         const body = await readJson(req);
         const createService = createServiceSchema.safeParse(body);
         if (createService.success) {
-          const service_id = await insertService({
-            title: createService.data?.title,
-            priceCents: createService.data?.priceCents,
+          const service = await insertService({
+            title: createService.data.title,
+            priceCents: createService.data.priceCents,
           });
-          if (service_id) {
-            res.writeHead(201, { "content-type": "application/json" });
-            res.setHeader("Location", `/services/:${service_id}`);
-            res.end("service created\n");
-          }
+          res.setHeader("Location", `/services/${service.id}`);
+          res.writeHead(201, { "content-type": "application/json" });
+          res.end(JSON.stringify(service));
         } else {
-          if (createService.error) {
-            throw new HttpError({
-              status: new StatusCodes().validation_failed,
-              code: "validation_failed",
-              message: new ErrorMessages().missing_fields,
-              details: {
-                errorDetails: z.flattenError(createService.error),
-              },
-            });
-          }
+          throw new HttpError({
+            status: new StatusCodes().validation_failed,
+            code: "validation_failed",
+            message: new ErrorMessages().missing_fields,
+            details: {
+              errorDetails: z.flattenError(createService.error),
+            },
+          });
         }
       } else {
         const os = {
           status: status_codes.not_found,
-          code: error_messages.not_found,
-          message:  req.statusMessage,
+          code: "404",
+          message: req.statusMessage,
         };
         throw new HttpError(os);
       }

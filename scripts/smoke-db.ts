@@ -1,5 +1,3 @@
-//inserts one service and reads it back.
-
 import { pool } from "../src/db/pool.js";
 import { findService, insertService } from "../src/services/db.js";
 import { CreateService } from "../src/services/schema.js";
@@ -10,9 +8,9 @@ try{
     priceCents: 9500,
 };
 
-const service_id = await insertService(mockService);
-const service = await findService(service_id);
-if(!service){
+const service = await insertService(mockService);
+const serviceId = await findService(service.id);
+if(!serviceId){
     console.log('not found');
     
 }else{
